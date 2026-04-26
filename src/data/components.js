@@ -490,20 +490,89 @@ export function getPCBudgetTier(budget) {
   return 'high'
 }
 
-// Helper: filter components by budget
-export function filterComponentsByBudget(components, budget) {
+// Budget allocation percentages for different component categories
+const BUDGET_ALLOCATION = {
+  gaming: {
+    CPU: 0.15,      // 15%
+    GPU: 0.35,      // 35% (most important for gaming)
+    RAM: 0.08,      // 8%
+    Storage: 0.08,  // 8%
+    Motherboard: 0.12, // 12%
+    PSU: 0.08,      // 8%
+    Case: 0.06,     // 6%
+    Monitor: 0.15,  // 15%
+    'Keyboard & Mouse': 0.03  // 3%
+  },
+  editing: {
+    CPU: 0.25,      // 25% (important for rendering)
+    GPU: 0.25,      // 25%
+    RAM: 0.10,      // 10%
+    Storage: 0.10,  // 10%
+    Motherboard: 0.12, // 12%
+    PSU: 0.08,      // 8%
+    Case: 0.05,     // 5%
+    Monitor: 0.12,  // 12%
+    'Keyboard & Mouse': 0.03  // 3%
+  },
+  studying: {
+    CPU: 0.20,      // 20%
+    GPU: 0.05,      // 5% (integrated graphics often)
+    RAM: 0.10,      // 10%
+    Storage: 0.10,  // 10%
+    Motherboard: 0.15, // 15%
+    PSU: 0.10,      // 10%
+    Case: 0.08,     // 8%
+    Monitor: 0.18,  // 18%
+    'Keyboard & Mouse': 0.04  // 4%
+  },
+  office: {
+    CPU: 0.18,      // 18%
+    GPU: 0.05,      // 5% (integrated graphics often)
+    RAM: 0.10,      // 10%
+    Storage: 0.12,  // 12%
+    Motherboard: 0.15, // 15%
+    PSU: 0.10,      // 10%
+    Case: 0.08,     // 8%
+    Monitor: 0.18,  // 18%
+    'Keyboard & Mouse': 0.04  // 4%
+  }
+}
+
+// Helper: filter components by allocated budget for that category
+export function filterComponentsByAllocatedBudget(components, allocatedBudget) {
   return components.filter(component => {
     const lowestPrice = Math.min(component.price.amazon, component.price.flipkart)
-    // Allow components that are within reasonable price range for the budget
-    // Using 40% of budget as max for any single component (except GPU which can be higher)
-    return lowestPrice <= budget * 0.4 || lowestPrice === 0
+    // Allow components within 120% of allocated budget (some flexibility)
+    return lowestPrice <= allocatedBudget * 1.2 || lowestPrice === 0
   })
 }
 
-// Helper: filter GPU by budget (GPUs can take up to 50% of budget)
-export function filterGPUByBudget(gpus, budget) {
-  return gpus.filter(gpu => {
-    const lowestPrice = Math.min(gpu.price.amazon, gpu.price.flipkart)
-    return lowestPrice <= budget * 0.5 || lowestPrice === 0
-  })
+// Helper: get components filtered by smart budget allocation
+export function getComponentsWithinBudget(purpose, budget) {
+  const tier = getPCBudgetTier(budget)
+  const allocation = BUDGET_ALLOCATION[purpose] || BUDGET_ALLOCATION.gaming
+  
+  // Get components for the tier
+  const cpuList = cpuData[purpose]?.[tier] || cpuData[purpose]?.budget || []
+  const gpuList = gpuData[purpose]?.[tier] || gpuData[purpose]?.budget || []
+  const ramList = ramData[tier] || ramData.budget || []
+  const storageList = storageData[tier] || storageData.budget || []
+  const motherboardList = motherboardData[tier] || motherboardData.budget || []
+  const psuList = psuData[tier] || psuData.budget || []
+  const caseList = caseData[tier] || caseData.budget || []
+  const monitorList = monitorData[tier] || monitorData.budget || []
+  const peripheralsList = peripheralsData[tier] || peripheralsData.budget || []
+  
+  // Filter by allocated budget for each category
+  return {
+    CPU: filterComponentsByAllocatedBudget(cpuList, budget * allocation.CPU),
+    GPU: filterComponentsByAllocatedBudget(gpuList, budget * allocation.GPU),
+    RAM: filterComponentsByAllocatedBudget(ramList, budget * allocation.RAM),
+    Storage: filterComponentsByAllocatedBudget(storageList, budget * allocation.Storage),
+    Motherboard: filterComponentsByAllocatedBudget(motherboardList, budget * allocation.Motherboard),
+    PSU: filterComponentsByAllocatedBudget(psuList, budget * allocation.PSU),
+    Case: filterComponentsByAllocatedBudget(caseList, budget * allocation.Case),
+    Monitor: filterComponentsByAllocatedBudget(monitorList, budget * allocation.Monitor),
+    'Keyboard & Mouse': filterComponentsByAllocatedBudget(peripheralsList, budget * allocation['Keyboard & Mouse']),
+  }
 }

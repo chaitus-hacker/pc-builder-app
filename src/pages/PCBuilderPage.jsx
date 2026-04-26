@@ -5,7 +5,7 @@ import PageWrapper from '../components/PageWrapper'
 import PurposeSelector from '../components/PurposeSelector'
 import BudgetSlider from '../components/BudgetSlider'
 import ComponentCard from '../components/ComponentCard'
-import { cpuData, gpuData, ramData, storageData, motherboardData, psuData, caseData, monitorData, peripheralsData, getPCBudgetTier, filterComponentsByBudget, filterGPUByBudget } from '../data/components'
+import { cpuData, gpuData, ramData, storageData, motherboardData, psuData, caseData, monitorData, peripheralsData, getPCBudgetTier, getComponentsWithinBudget } from '../data/components'
 
 const steps = ['Purpose', 'Budget', 'Results']
 
@@ -26,33 +26,7 @@ export default function PCBuilderPage() {
 
   const tier = getPCBudgetTier(budget)
 
-  const getComponents = () => {
-    const tier = getPCBudgetTier(budget)
-    
-    // Get components for the tier
-    const cpuList = cpuData[purpose]?.[tier] || cpuData[purpose]?.budget || []
-    const gpuList = gpuData[purpose]?.[tier] || gpuData[purpose]?.budget || []
-    const ramList = ramData[tier] || ramData.budget || []
-    const storageList = storageData[tier] || storageData.budget || []
-    const motherboardList = motherboardData[tier] || motherboardData.budget || []
-    const psuList = psuData[tier] || psuData.budget || []
-    const caseList = caseData[tier] || caseData.budget || []
-    const monitorList = monitorData[tier] || monitorData.budget || []
-    const peripheralsList = peripheralsData[tier] || peripheralsData.budget || []
-    
-    // Filter by actual budget
-    return {
-      CPU: filterComponentsByBudget(cpuList, budget),
-      GPU: filterGPUByBudget(gpuList, budget),
-      RAM: filterComponentsByBudget(ramList, budget),
-      Storage: filterComponentsByBudget(storageList, budget),
-      Motherboard: filterComponentsByBudget(motherboardList, budget),
-      PSU: filterComponentsByBudget(psuList, budget),
-      Case: filterComponentsByBudget(caseList, budget),
-      Monitor: filterComponentsByBudget(monitorList, budget),
-      'Keyboard & Mouse': filterComponentsByBudget(peripheralsList, budget),
-    }
-  }
+  const getComponents = () => getComponentsWithinBudget(purpose, budget)
 
   const selectPart = (cat, part) => setSelectedParts(prev => ({ ...prev, [cat]: part }))
   const isSelected = (cat, name) => selectedParts[cat]?.name === name
