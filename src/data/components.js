@@ -489,3 +489,21 @@ export function getPCBudgetTier(budget) {
   if (budget <= 100000) return 'mid'
   return 'high'
 }
+
+// Helper: filter components by budget
+export function filterComponentsByBudget(components, budget) {
+  return components.filter(component => {
+    const lowestPrice = Math.min(component.price.amazon, component.price.flipkart)
+    // Allow components that are within reasonable price range for the budget
+    // Using 40% of budget as max for any single component (except GPU which can be higher)
+    return lowestPrice <= budget * 0.4 || lowestPrice === 0
+  })
+}
+
+// Helper: filter GPU by budget (GPUs can take up to 50% of budget)
+export function filterGPUByBudget(gpus, budget) {
+  return gpus.filter(gpu => {
+    const lowestPrice = Math.min(gpu.price.amazon, gpu.price.flipkart)
+    return lowestPrice <= budget * 0.5 || lowestPrice === 0
+  })
+}
