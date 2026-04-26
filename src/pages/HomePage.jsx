@@ -257,6 +257,17 @@ export default function HomePage() {
         </motion.div>
       </section>
 
+      {/* ── CREATED BY MGIT STUDENTS ──────────────────────────────────── */}
+      <div style={{ background: '#f5c800', borderTop: '2px solid #d4a900', padding: '20px 0', overflow: 'hidden' }}>
+        <div className="marquee-track">
+          {Array(8).fill('✨ CREATED BY MGIT STUDENTS ✨').map((text, i) => (
+            <span key={i} style={{ fontSize: 16, fontWeight: 900, color: '#1a1a1a', whiteSpace: 'nowrap', padding: '0 40px', fontFamily: 'Space Grotesk, sans-serif', letterSpacing: '2px' }}>
+              {text}
+            </span>
+          ))}
+        </div>
+      </div>
+
     </PageWrapper>
   )
 }
