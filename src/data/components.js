@@ -540,11 +540,60 @@ const BUDGET_ALLOCATION = {
 
 // Helper: filter components by allocated budget for that category
 export function filterComponentsByAllocatedBudget(components, allocatedBudget) {
-  return components.filter(component => {
+  const filtered = components.filter(component => {
     const lowestPrice = Math.min(component.price.amazon, component.price.flipkart)
     // Allow components within 120% of allocated budget (some flexibility)
     return lowestPrice <= allocatedBudget * 1.2 || lowestPrice === 0
   })
+  
+  // If no components found within budget, return the cheapest option
+  if (filtered.length === 0 && components.length > 0) {
+    const sortedByPrice = [...components].sort((a, b) => {
+      const priceA = Math.min(a.price.amazon, a.price.flipkart)
+      const priceB = Math.min(b.price.amazon, b.price.flipkart)
+      return priceA - priceB
+    })
+    return [sortedByPrice[0]] // Return cheapest option
+  }
+  
+  return filtered
+}
+
+// Helper: get all available components across all tiers
+function getAllComponentsForCategory(categoryData, purpose = null) {
+  const allComponents = []
+  
+  if (purpose && categoryData[purpose]) {
+    // For purpose-specific data (CPU, GPU)
+    const purposeData = categoryData[purpose]
+    if (purposeData.budget) allComponents.push(...purposeData.budget)
+    if (purposeData.mid) allComponents.push(...purposeData.mid)
+    if (purposeData.high) allComponents.push(...purposeData.high)
+  } else if (purpose) {
+    // If purpose exists but no data, try to get from other purposes
+    Object.keys(categoryData).forEach(key => {
+      if (categoryData[key].budget) allComponents.push(...categoryData[key].budget)
+      if (categoryData[key].mid) allComponents.push(...categoryData[key].mid)
+      if (categoryData[key].high) allComponents.push(...categoryData[key].high)
+    })
+  } else {
+    // For non-purpose-specific data (RAM, Storage, etc.)
+    if (categoryData.budget) allComponents.push(...categoryData.budget)
+    if (categoryData.mid) allComponents.push(...categoryData.mid)
+    if (categoryData.high) allComponents.push(...categoryData.high)
+  }
+  
+  // Remove duplicates based on name
+  const uniqueComponents = []
+  const seen = new Set()
+  allComponents.forEach(comp => {
+    if (!seen.has(comp.name)) {
+      seen.add(comp.name)
+      uniqueComponents.push(comp)
+    }
+  })
+  
+  return uniqueComponents
 }
 
 // Helper: get components filtered by smart budget allocation
@@ -552,16 +601,16 @@ export function getComponentsWithinBudget(purpose, budget) {
   const tier = getPCBudgetTier(budget)
   const allocation = BUDGET_ALLOCATION[purpose] || BUDGET_ALLOCATION.gaming
   
-  // Get components for the tier
-  const cpuList = cpuData[purpose]?.[tier] || cpuData[purpose]?.budget || []
-  const gpuList = gpuData[purpose]?.[tier] || gpuData[purpose]?.budget || []
-  const ramList = ramData[tier] || ramData.budget || []
-  const storageList = storageData[tier] || storageData.budget || []
-  const motherboardList = motherboardData[tier] || motherboardData.budget || []
-  const psuList = psuData[tier] || psuData.budget || []
-  const caseList = caseData[tier] || caseData.budget || []
-  const monitorList = monitorData[tier] || monitorData.budget || []
-  const peripheralsList = peripheralsData[tier] || peripheralsData.budget || []
+  // Get ALL available components across all tiers (not just current tier)
+  const cpuList = getAllComponentsForCategory(cpuData, purpose)
+  const gpuList = getAllComponentsForCategory(gpuData, purpose)
+  const ramList = getAllComponentsForCategory(ramData)
+  const storageList = getAllComponentsForCategory(storageData)
+  const motherboardList = getAllComponentsForCategory(motherboardData)
+  const psuList = getAllComponentsForCategory(psuData)
+  const caseList = getAllComponentsForCategory(caseData)
+  const monitorList = getAllComponentsForCategory(monitorData)
+  const peripheralsList = getAllComponentsForCategory(peripheralsData)
   
   // Filter by allocated budget for each category
   return {
