@@ -1,0 +1,151 @@
+/* ── Reset ─────────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── Base ──────────────────────────────────────────────────────────────────── */
+body {
+  font-family: 'Inter', sans-serif;
+  background: #fffef7;
+  color: #1a1a1a;
+  overflow-x: hidden;
+}
+
+/* ── Colour tokens ─────────────────────────────────────────────────────────── */
+:root {
+  --yellow:      #f5c800;
+  --yellow-dark: #d4a900;
+  --yellow-light:#fff9d6;
+  --yellow-mid:  #fef08a;
+  --black:       #1a1a1a;
+  --grey:        #6b7280;
+  --grey-light:  #f3f4f6;
+  --white:       #ffffff;
+  --border:      rgba(0,0,0,0.08);
+}
+
+/* ── Glass card ────────────────────────────────────────────────────────────── */
+.glass {
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(245,200,0,0.2);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+}
+
+/* ── Gradient text ─────────────────────────────────────────────────────────── */
+.gradient-text {
+  background: linear-gradient(135deg, #d4a900 0%, #f5c800 60%, #fbbf24 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Range slider ──────────────────────────────────────────────────────────── */
+input[type='range'] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 5px;
+  border-radius: 3px;
+  background: linear-gradient(to right, #f5c800, #fbbf24);
+  outline: none;
+}
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #f5c800;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(245,200,0,0.5);
+  border: 3px solid #ffffff;
+}
+
+/* ── Card hover ────────────────────────────────────────────────────────────── */
+.card-hover {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 48px rgba(245,200,0,0.2);
+}
+
+/* ── Badges ────────────────────────────────────────────────────────────────── */
+.badge-best {
+  background: #f5c800;
+  color: #1a1a1a;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ── Scrollbar ─────────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #fffef7; }
+::-webkit-scrollbar-thumb { background: #f5c800; border-radius: 3px; }
+
+/* ── Marquee ───────────────────────────────────────────────────────────────── */
+@keyframes marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 28s linear infinite;
+}
+.marquee-track:hover { animation-play-state: paused; }
+
+/* ── Yellow button ─────────────────────────────────────────────────────────── */
+.btn-yellow {
+  background: #f5c800;
+  color: #1a1a1a;
+  border: none;
+  font-weight: 800;
+  cursor: pointer;
+  font-size: 15px;
+  padding: 14px 32px;
+  border-radius: 10px;
+  letter-spacing: 0.3px;
+  box-shadow: 0 4px 16px rgba(245,200,0,0.35);
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn-yellow:hover {
+  background: #d4a900;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(245,200,0,0.45);
+}
+.btn-yellow:active { transform: translateY(0); }
+
+/* ── Outlined button ───────────────────────────────────────────────────────── */
+.btn-outline {
+  background: transparent;
+  color: #1a1a1a;
+  border: 2px solid #1a1a1a;
+  font-weight: 800;
+  cursor: pointer;
+  font-size: 15px;
+  padding: 14px 32px;
+  border-radius: 10px;
+  letter-spacing: 0.3px;
+  transition: background 0.2s, color 0.2s, transform 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn-outline:hover {
+  background: #1a1a1a;
+  color: #f5c800;
+  transform: translateY(-2px);
+}
+.btn-outline:active { transform: translateY(0); }
+
+/* ── Page fade-in ──────────────────────────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
