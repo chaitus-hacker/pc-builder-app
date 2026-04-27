@@ -8,6 +8,7 @@ import LaptopPage from './pages/LaptopPage'
 import BuildGuidePage from './pages/BuildGuidePage'
 import OwnerPage from './pages/OwnerPage'
 import ComparePage from './pages/ComparePage'
+import BuildSummaryPage from './pages/BuildSummaryPage'
 
 // Scroll to top on every route change
 function ScrollToTop() {
@@ -25,12 +26,13 @@ export default function App() {
       <ScrollToTop />
       <AnimatePresence mode="wait" initial={false}>
         <Routes location={location} key={location.pathname}>
-          <Route path="/"            element={<HomePage />} />
-          <Route path="/pc-builder"  element={<PCBuilderPage />} />
-          <Route path="/laptops"     element={<LaptopPage />} />
-          <Route path="/build-guide" element={<BuildGuidePage />} />
-          <Route path="/compare"     element={<ComparePage />} />
-          <Route path="/about"       element={<OwnerPage />} />
+          <Route path="/"              element={<HomePage />} />
+          <Route path="/pc-builder"    element={<PCBuilderPage />} />
+          <Route path="/build-summary" element={<BuildSummaryPage />} />
+          <Route path="/laptops"       element={<LaptopPage />} />
+          <Route path="/build-guide"   element={<BuildGuidePage />} />
+          <Route path="/compare"       element={<ComparePage />} />
+          <Route path="/about"         element={<OwnerPage />} />
         </Routes>
       </AnimatePresence>
     </div>
